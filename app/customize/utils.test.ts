@@ -1,11 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  stripHash,
-  isValidHex,
-  buildQueryParams,
-  getExportSnippet,
-  getPlaceholderSnippet,
-} from './utils';
+import { buildQueryParams, getExportSnippet, getPlaceholderSnippet } from './utils';
 import type { CustomizeOptions } from './types';
 
 describe('Export Snippet utilities', () => {
