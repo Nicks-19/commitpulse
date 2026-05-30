@@ -173,7 +173,7 @@ function getGraphQLErrorMessage(errors: unknown): string {
   if (!Array.isArray(errors)) return 'GitHub GraphQL API returned an unknown error';
   const firstError = errors[0];
   if (
-    firstError &&
+    firstError !== null &&
     typeof firstError === 'object' &&
     'message' in firstError &&
     typeof firstError.message === 'string'
