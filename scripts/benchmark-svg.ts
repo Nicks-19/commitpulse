@@ -29,7 +29,7 @@ const calendar = {
   totalContributions: 1240,
   weeks: Array.from({ length: 14 }, (_, weekIndex) => ({
     contributionDays: Array.from({ length: 7 }, (_, dayIndex) => ({
-      contributionCount: deterministicContributionCount(weekIndex,dayIndex),
+      contributionCount:deterministicContributionCount(weekIndex,dayIndex),
       date: `2026-05-${String(weekIndex * 7 + dayIndex + 1).padStart(2, '0')}`,
     })),
   })),
