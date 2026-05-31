@@ -403,6 +403,41 @@ describe('calculateStreak — timezone awareness', () => {
     ],
   };
 
+  it('verifies streak formulas for timezone shifts around midnight timeline', () => {
+    const calendar = {
+      totalContributions: 2,
+      weeks: [
+        {
+          contributionDays: [
+            { contributionCount: 1, date: '2024-06-14' },
+            { contributionCount: 1, date: '2024-06-15' },
+          ],
+        },
+      ],
+    };
+
+    // Commit timeline:
+    // 2024-06-14 23:59 UTC
+    const beforeMidnight = new Date('2024-06-14T23:59:00.000Z');
+
+    // 2 minutes later
+    // 2024-06-15 00:01 UTC
+    const afterMidnight = new Date('2024-06-15T00:01:00.000Z');
+
+    const resultBefore = calculateStreak(calendar, 'UTC', beforeMidnight);
+
+    const resultAfter = calculateStreak(calendar, 'UTC', afterMidnight);
+
+    expect(resultBefore.currentStreak).toBe(1);
+    expect(resultAfter.currentStreak).toBe(2);
+
+    expect(resultBefore.longestStreak).toBe(2);
+    expect(resultAfter.longestStreak).toBe(2);
+
+    expect(resultBefore.todayDate).toBe('2024-06-14');
+    expect(resultAfter.todayDate).toBe('2024-06-15');
+  });
+
   const nowUTC = new Date('2024-06-16T07:00:00.000Z');
 
   it('breaks the streak when evaluated in UTC because today and yesterday both have 0 commits', () => {
