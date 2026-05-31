@@ -3,7 +3,7 @@
 import type { BadgeParams, ContributionCalendar, StreakStats, MonthlyStats } from '../../types';
 import { getLabels, type BadgeLabels } from '../i18n/badgeLabels';
 import { AUTO_THEME_DARK, AUTO_THEME_LIGHT, themes } from './themes';
-import { TOWER_ANIMATION_CSS } from './animations';
+import { getTowerAnimationCSS } from './animations';
 import { computeTowers, type TowerData } from './layout';
 import {
   sanitizeFont,
@@ -195,7 +195,8 @@ function renderStyle(
   text: string,
   accent: string,
   sf: number,
-  bg: string
+  bg: string,
+  entrance: 'rise' | 'fade' | 'slide' | 'none' = 'rise'
 ): string {
   const fs = (n: number) => Math.round(n * sf * 10) / 10;
   const isLightBg = getLuminance(bg) > 0.5;
@@ -206,7 +207,7 @@ function renderStyle(
   <style>
   @import url('https://fonts.googleapis.com/css2?family=Fira+Code&amp;family=JetBrains+Mono&amp;family=Roboto&amp;family=Syncopate:wght@400;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap');
   ${googleFontsImport}
-  ${TOWER_ANIMATION_CSS}
+  ${getTowerAnimationCSS(entrance)}
   .scan-line {
     animation: scan-sweep var(--scan-speed, 8s) linear infinite;
     transform-box: fill-box;
@@ -524,7 +525,7 @@ export function generateSVG(
   return `
 <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 ${W} ${H}" fill="none" role="img">
   ${renderHeader(safeUser, stats, sf, params)}
-  ${renderStyle(selectedFont, statsFont, googleFontsImport, text, mainAccentHex, sf, bg)}
+  ${renderStyle(selectedFont, statsFont, googleFontsImport, text, mainAccentHex, sf, bg, params.entrance || 'rise')}
   <rect width="${W}" height="${H}" rx="${radius}" fill="${params.hideBackground ? 'transparent' : bg}" ${borderAttr} />
   <g transform="translate(0, ${Math.round(20 * sf)})">${towers}</g>
   ${renderIsometricLabels(calendar, params, text, sf)}
@@ -585,7 +586,7 @@ function generateAutoThemeSVG(
   :root { --cp-bg: #${light.bg}; --cp-text: #${light.text}; --cp-accent: #${light.accent}; --cp-label-fill: ${lightLabelFill}; --cp-label-opacity: ${lightLabelOpacity}; }
   @media (prefers-color-scheme: dark) { :root { --cp-bg: #${dark.bg}; --cp-text: #${dark.text}; --cp-accent: #${dark.accent}; --cp-label-fill: ${darkLabelFill}; --cp-label-opacity: ${darkLabelOpacity}; } }
   .cp-bg-fill { fill: var(--cp-bg); } .cp-text-fill { fill: var(--cp-text); color: var(--cp-text); } .cp-accent-fill { fill: var(--cp-accent); color: var(--cp-accent); }
-  ${TOWER_ANIMATION_CSS}
+  ${getTowerAnimationCSS(params.entrance || 'rise')}
   .scan-line {
     animation: scan-sweep var(--scan-speed, 8s) linear infinite;
     transform-box: fill-box;
@@ -1917,7 +1918,7 @@ function generateAutoThemeVersusSVG(
   :root { --cp-bg: #${light.bg}; --cp-text: #${light.text}; --cp-accent: #${light.accent}; --cp-label-fill: ${lightLabelFill}; --cp-label-opacity: ${lightLabelOpacity}; }
   @media (prefers-color-scheme: dark) { :root { --cp-bg: #${dark.bg}; --cp-text: #${dark.text}; --cp-accent: #${dark.accent}; --cp-label-fill: ${darkLabelFill}; --cp-label-opacity: ${darkLabelOpacity}; } }
   .cp-bg-fill { fill: var(--cp-bg); } .cp-text-fill { fill: var(--cp-text); color: var(--cp-text); } .cp-accent-fill { fill: var(--cp-accent); color: var(--cp-accent); }
-  ${TOWER_ANIMATION_CSS}
+  ${getTowerAnimationCSS(params.entrance || 'rise')}
   .scan-line {
     animation: scan-sweep var(--scan-speed, 8s) linear infinite;
     transform-box: fill-box;

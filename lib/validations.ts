@@ -240,6 +240,7 @@ export const streakParamsSchema = z.object({
     .string()
     .optional()
     .transform((val) => val === 'true' || val === '1'),
+  entrance: z.enum(['rise', 'fade', 'slide', 'none']).catch('rise').default('rise'),
 });
 
 export const githubParamsSchema = z.object({
