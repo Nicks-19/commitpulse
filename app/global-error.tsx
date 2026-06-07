@@ -16,9 +16,9 @@ export default function GlobalError({
             <h1 className="text-6xl font-black text-red-500">500</h1>
             <p className="text-xl text-white/80">A critical error occurred at the root level.</p>
             <div className="p-4 bg-white/5 rounded-xl border border-white/10 text-left w-full overflow-auto">
-                <code className="text-sm text-red-400 font-mono">
-                    {error.message || 'Unknown global error'}
-                </code>
+              <code className="text-sm text-red-400 font-mono">
+                {error.message || 'Unknown global error'}
+              </code>
             </div>
             <button
               onClick={() => reset()}

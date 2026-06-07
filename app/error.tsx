@@ -81,15 +81,15 @@ export default function ErrorBoundary({
             <p>
               <span className="text-red-400">~</span>
               <span className="text-white/40"> $ </span>
-              <span className="text-white/80">
-                git status
-              </span>
+              <span className="text-white/80">git status</span>
             </p>
 
             <p className="text-red-400/80">
               fatal: Your branch and &apos;origin/main&apos; have diverged.
               <br />
-              <span className="text-white/60 text-xs mt-2 block">{error.message || 'Unknown runtime error occurred.'}</span>
+              <span className="text-white/60 text-xs mt-2 block">
+                {error.message || 'Unknown runtime error occurred.'}
+              </span>
             </p>
 
             <p className="flex items-center gap-1 pt-1">
