@@ -69,6 +69,37 @@ export function validateGitHubUsername(username: string): boolean {
   return /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i.test(username);
 }
 
+/**
+ * Strict ISO date validation for date-only inputs (YYYY-MM-DD).
+ * Validates that the date is a real calendar date by checking:
+ * 1. Format matches YYYY-MM-DD
+ * 2. Year, month, day are valid ranges
+ * 3. Date round-trips correctly (serialization matches input)
+ */
+export function validateStrictISODate(dateStr: string): boolean {
+  // Must match YYYY-MM-DD format
+  const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return false;
+
+  const [, yearStr, monthStr, dayStr] = match;
+  const year = parseInt(yearStr, 10);
+  const month = parseInt(monthStr, 10);
+  const day = parseInt(dayStr, 10);
+
+  // Basic range checks
+  if (month < 1 || month > 12) return false;
+  if (day < 1 || day > 31) return false;
+  if (year < 2008) return false;
+
+  // Create UTC date and verify it round-trips
+  const date = new Date(Date.UTC(year, month - 1, day));
+  const serialized = date.toISOString().split('T')[0];
+
+  // Check that the serialized date matches the input
+  // This catches invalid dates like Feb 31, Apr 31, etc.
+  return serialized === dateStr;
+}
+
 function dimensionParam(name: string, min: number, max: number) {
   return z
     .string()
@@ -256,9 +287,9 @@ const baseStreakParamsSchema = z.object({
     .refine(
       (val) => {
         if (!val) return true;
-        return !isNaN(Date.parse(val));
+        return validateStrictISODate(val);
       },
-      { message: 'Invalid "from" date format. Use ISO 8601 (e.g. 2023-01-01).' }
+      { message: 'Invalid "from" date. Use YYYY-MM-DD format with a valid calendar date.' }
     ),
   to: z
     .string()
@@ -266,9 +297,9 @@ const baseStreakParamsSchema = z.object({
     .refine(
       (val) => {
         if (!val) return true;
-        return !isNaN(Date.parse(val));
+        return validateStrictISODate(val);
       },
-      { message: 'Invalid "to" date format. Use ISO 8601 (e.g. 2023-12-31).' }
+      { message: 'Invalid "to" date. Use YYYY-MM-DD format with a valid calendar date.' }
     ),
   date: z
     .string()
@@ -276,9 +307,9 @@ const baseStreakParamsSchema = z.object({
     .refine(
       (val) => {
         if (!val) return true;
-        return !isNaN(Date.parse(val));
+        return validateStrictISODate(val);
       },
-      { message: 'Invalid "date" format. Use ISO 8601.' }
+      { message: 'Invalid "date". Use YYYY-MM-DD format with a valid calendar date.' }
     ),
   refresh: z.string().optional().transform(toRefreshFlag),
   bypassCache: z.string().optional().transform(toRefreshFlag),
