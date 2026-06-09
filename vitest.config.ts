@@ -10,7 +10,8 @@ export default defineConfig({
     exclude: [
       'node_modules',
       '.next',
-      ...(process.argv.some((arg) => arg.includes('massive-scaling'))
+      ...(process.env.TEST_SCALING === 'true' ||
+      process.argv.some((arg) => arg.includes('massive-scaling.test'))
         ? []
         : ['**/*.massive-scaling.test.ts']),
     ],
