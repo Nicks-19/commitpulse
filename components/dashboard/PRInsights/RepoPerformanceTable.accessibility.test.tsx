@@ -5,14 +5,18 @@ import RepoPerformanceTable from './RepoPerformanceTable';
 
 type RepoPerformanceData = React.ComponentProps<typeof RepoPerformanceTable>['data'];
 
+type MotionDivProps = {
+  children?: React.ReactNode;
+  className?: string;
+} & Record<string, unknown>;
+
 vi.mock('framer-motion', () => ({
   motion: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    div: ({ children, className, ...props }: any) => {
+    div: ({ children, className, ...props }: MotionDivProps) => {
       const validProps = Object.keys(props).reduce(
         (acc, key) => {
           if (!['initial', 'animate', 'transition'].includes(key)) {
-            acc[key] = props[key as keyof typeof props];
+            acc[key] = props[key];
           }
           return acc;
         },
@@ -30,6 +34,22 @@ vi.mock('framer-motion', () => ({
 
 describe('RepoPerformanceTable Accessibility Standards & Screen Reader Aria Compliance', () => {
   const mockData = {
+    totalPRs: 36,
+    openPRs: 4,
+    mergedPRs: 24,
+    closedPRs: 8,
+    avgMergeTime: 12,
+    avgReviewComments: 3,
+    fastestMerged: null,
+    mostDiscussed: null,
+    largest: null,
+    timeline: [],
+    sizeDistribution: [],
+    weekdayDistribution: [],
+    monthlyTrend: [],
+    reviewActivity: [],
+    labels: [],
+    authors: [],
     repoPerformance: [
       {
         name: 'octocat/commitpulse',
@@ -44,7 +64,7 @@ describe('RepoPerformanceTable Accessibility Standards & Screen Reader Aria Comp
         reviewCount: 9,
       },
     ],
-  } as RepoPerformanceData;
+  } as unknown as RepoPerformanceData;
 
   it('inspects markup for correct table roles and accessible column labels', () => {
     render(<RepoPerformanceTable data={mockData} />);
@@ -91,7 +111,12 @@ describe('RepoPerformanceTable Accessibility Standards & Screen Reader Aria Comp
   });
 
   it('confirms empty state exposes accessible fallback text when no repository data exists', () => {
-    render(<RepoPerformanceTable data={{ repoPerformance: [] } as RepoPerformanceData} />);
+    const emptyData = {
+      ...mockData,
+      repoPerformance: [],
+    } as unknown as RepoPerformanceData;
+
+    render(<RepoPerformanceTable data={emptyData} />);
 
     expect(screen.getByText(/no repository data available/i)).toBeInTheDocument();
   });
